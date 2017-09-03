@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="io.pantheist.kinds.natures.DogmaNature"
+         point="org.eclipse.core.resources.natures"
+         name="Dogma Nature">
+      <runtime>
+         <run
+               class="io.pantheist.kinds.natures.DogmaNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="io.pantheist.NewDogmaWizard"
+         name="New Dogma"
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="io.pantheist.kinds"
+            name="Pantheist Kinds">
+      </category>
+      <wizard
+            category="io.pantheist.kinds"
+            class="io.pantheist.kinds.wizards.NewDogmaWizard"
+            descriptionImage="icons/dogma@2x.png"
+            hasPages="true"
+            icon="icons/dogma.png"
+            id="io.pantheist.kinds.wizards.NewDogmaWizard"
+            name="Dogma"
+            project="true">
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="io.pantheist.kinds.editors.JsonSchemaEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="json"
+            icon="icons/json.png"
+            id="io.pantheist.kinds.editors.JsonSchemaEditor"
+            name="JSON Schema based JSON Editor">
+      </editor>
+   </extension>
+
+</plugin>
