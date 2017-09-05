@@ -9,8 +9,8 @@ public class JsonSchemaEditor extends TextEditor {
 	public JsonSchemaEditor() {
 		super();
 		colorManager = new ColorManager();
-		setSourceViewerConfiguration(new XMLConfiguration(colorManager));
-		setDocumentProvider(new XMLDocumentProvider());
+		setSourceViewerConfiguration(new JsonConfiguration(colorManager));
+		setDocumentProvider(new JsonDocumentProvider());
 	}
 	@Override
 	public void dispose() {

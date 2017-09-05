@@ -1,21 +1,28 @@
 package io.pantheist.kinds.parse.json;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import io.pantheist.kinds.parse.IParseColor;
+import io.pantheist.kinds.parse.IParseListener;
 import io.pantheist.kinds.parse.IParseOption;
 import io.pantheist.kinds.parse.IParseState;
 import io.pantheist.kinds.parse.Parser;
 
 public class ParseJson
 {
-	public static void main(final String[] args) throws Exception
+	public static void main(final String[] args)
 	{
-		final Js initState = init();
+		final String text = "[x";
+		new Parser<>(init(), text, new IParseListener() {
 
-		new Parser<>(initState, "  {\"foo\":1.9e+7}").parse();
+			@Override
+			public void acceptSequence(final int start, final int end, final IParseColor color)
+			{
+				System.out.println(color + " " + text.subSequence(start, end));
+			}
+		}).parse();
 	}
 
 	public static Js init()
@@ -60,8 +67,8 @@ public class ParseJson
 	{
 		final Js string = new Js();
 
-		string.add(j("[ -~&&[^\"]]+", color, string));
-		string.add(j("\\\\[\"\\/bfnrt]]", ParseColorJson.SPECIAL_CHAR, string));
+		string.add(j("[ -~&&[^\\\\\"]]+", color, string));
+		string.add(j("\\\\[\"\\\\/bfnrt]", ParseColorJson.SPECIAL_CHAR, string));
 		string.add(j("\\\\u[0-9a-fA-F]{4}", ParseColorJson.SPECIAL_CHAR, string));
 		string.add(j(eow("\""), color));
 		return j("\"", color, string);
@@ -82,7 +89,7 @@ public class ParseJson
 		return Pattern.compile("^" + regex);
 	}
 
-	private static final class JOption implements IParseOption<Js>
+	static final class JOption implements IParseOption<Js>
 	{
 		private final Pattern pattern;
 		private final ParseColorJson color;
@@ -117,37 +124,5 @@ public class ParseJson
 		{
 			return stack;
 		}
-	}
-
-	private static class Js implements IParseState<Js>
-	{
-		private final List<JOption> options;
-
-		private Js()
-		{
-			this.options = new ArrayList<>();
-		}
-
-		/**
-		 * Mutates this
-		 */
-		public Js add(final JOption option)
-		{
-			this.options.add(option);
-			return this;
-		}
-
-		public Js add(final Js js)
-		{
-			this.options.addAll(js.options());
-			return this;
-		}
-
-		@Override
-		public Collection<JOption> options()
-		{
-			return options;
-		}
-
 	}
 }

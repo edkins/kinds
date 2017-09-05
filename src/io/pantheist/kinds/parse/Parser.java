@@ -2,38 +2,49 @@ package io.pantheist.kinds.parse;
 
 import java.util.regex.Matcher;
 
+import io.pantheist.kinds.parse.json.ParseColorJson;
+
 public final class Parser<S>
 {
 	private final CharSequence text;
 	private int position;
 	private final IParseStack<IParseState<S>> stack;
 	private boolean finished;
+	private final IParseListener listener;
 
-	public Parser(final IParseState<S> initialState, final CharSequence text)
+	public Parser(final IParseState<S> initialState, final CharSequence text, final IParseListener listener)
 	{
 		this.text = text;
 		this.position = 0;
 		this.stack = new ParseStackSimple<>();
 		this.finished = false;
+		this.listener = listener;
 
 		this.stack.push(initialState);
 	}
 
-	public void parse() throws ParserException
+	public void parse()
 	{
 		if (finished)
 		{
-			throw new ParserException("Already parsed");
+			throw new IllegalStateException("Already parsed");
 		}
 
-		while (position != text.length())
+		try
 		{
-			considerOptions();
-		}
+			while (position != text.length())
+			{
+				considerOptions();
+			}
 
-		if (!stack.isEmpty())
+			if (!stack.isEmpty())
+			{
+				throw new ParserException("Stack is not empty at the end");
+			}
+		}
+		catch (final ParserException ex)
 		{
-			throw new ParserException("Stack is not empty at the end");
+			listener.acceptSequence(position, text.length(), ParseColorJson.INVALID);
 		}
 
 		finished = true;
@@ -71,13 +82,15 @@ public final class Parser<S>
 		final Matcher matcher = option.pattern().matcher(subsequence);
 		if (matcher.find())
 		{
-			System.out.println(option.color() + " " + matcher.group());
-
 			for (final IParseState<S> item : option.stack())
 			{
 				stack.push(item);
 			}
-			position += matcher.end();
+
+			final int newPosition = position + matcher.end();
+			listener.acceptSequence(position, newPosition, option.color());
+
+			position = newPosition;
 			return true;
 		}
 		else
