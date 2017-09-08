@@ -33,12 +33,20 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="io.pantheist.kinds.editors.JsonSchemaEditor"
+            class="io.pantheist.kinds.editors.json.JsonSchemaEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             extensions="json"
             icon="icons/json.png"
-            id="io.pantheist.kinds.editors.JsonSchemaEditor"
+            id="io.pantheist.kinds.editors.json.JsonSchemaEditor"
             name="JSON Schema based JSON Editor">
+      </editor>
+      <editor
+            class="io.pantheist.kinds.editors.logic.LogicEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="logic"
+            icon="icons/sample.png"
+            id="io.pantheist.kinds.editors.logic.LogicEditor"
+            name="Sample XML Editor">
       </editor>
    </extension>
 

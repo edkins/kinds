@@ -1,30 +1,10 @@
 package io.pantheist.kinds.parse.json;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import io.pantheist.kinds.parse.IParseColor;
-import io.pantheist.kinds.parse.IParseListener;
-import io.pantheist.kinds.parse.IParseOption;
-import io.pantheist.kinds.parse.IParseState;
-import io.pantheist.kinds.parse.Parser;
+import io.pantheist.kinds.misc.Arrays;
+import io.pantheist.kinds.parse.ParseOption;
 
 public class ParseJson
 {
-	public static void main(final String[] args)
-	{
-		final String text = "[x";
-		new Parser<>(init(), text, new IParseListener() {
-
-			@Override
-			public void acceptSequence(final int start, final int end, final IParseColor color)
-			{
-				System.out.println(color + " " + text.subSequence(start, end));
-			}
-		}).parse();
-	}
-
 	public static Js init()
 	{
 		final Js value = new Js(); // mutable; we'll add things to this.
@@ -81,48 +61,6 @@ public class ParseJson
 
 	private static Js j(final String regex, final ParseColorJson color, final Js... items)
 	{
-		return new Js().add(new JOption(regex, color, items));
-	}
-
-	private static Pattern compile(final String regex)
-	{
-		return Pattern.compile("^" + regex);
-	}
-
-	static final class JOption implements IParseOption<Js>
-	{
-		private final Pattern pattern;
-		private final ParseColorJson color;
-		private final List<IParseState<Js>> stack;
-
-		protected JOption(final String regex, final ParseColorJson color, final Js... stack)
-		{
-			this.pattern = compile(regex);
-			this.color = color;
-
-			this.stack = new ArrayList<>();
-			for (int i = stack.length - 1; i >= 0; i--)
-			{
-				this.stack.add(stack[i]);
-			}
-		}
-
-		@Override
-		public final Pattern pattern()
-		{
-			return pattern;
-		}
-
-		@Override
-		public final ParseColorJson color()
-		{
-			return color;
-		}
-
-		@Override
-		public List<IParseState<Js>> stack()
-		{
-			return stack;
-		}
+		return new Js().add(new ParseOption<>(regex, color, Arrays.reverse(items)));
 	}
 }

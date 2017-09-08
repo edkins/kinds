@@ -1,4 +1,4 @@
-package io.pantheist.kinds.editors;
+package io.pantheist.kinds.editors.json;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;

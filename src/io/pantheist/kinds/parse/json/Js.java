@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.pantheist.kinds.parse.IParseOption;
 import io.pantheist.kinds.parse.IParseState;
-import io.pantheist.kinds.parse.json.ParseJson.JOption;
 
 public class Js implements IParseState<Js>
 {
-	private final List<JOption> options;
+	private final List<IParseOption<Js>> options;
 
 	Js()
 	{
@@ -19,7 +19,7 @@ public class Js implements IParseState<Js>
 	/**
 	 * Mutates this
 	 */
-	public Js add(final JOption option)
+	public Js add(final IParseOption<Js> option)
 	{
 		this.options.add(option);
 		return this;
@@ -32,9 +32,20 @@ public class Js implements IParseState<Js>
 	}
 
 	@Override
-	public Collection<JOption> options()
+	public Collection<IParseOption<Js>> options()
 	{
 		return options;
 	}
 
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (final IParseOption<Js> option : options)
+		{
+			sb.append(option);
+			sb.append(' ');
+		}
+		return sb.toString();
+	}
 }

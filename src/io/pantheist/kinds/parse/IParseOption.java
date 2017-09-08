@@ -9,5 +9,5 @@ public interface IParseOption<S>
 
 	IParseColor color();
 
-	List<IParseState<S>> stack();
+	List<? extends IParseState<S>> stack();
 }

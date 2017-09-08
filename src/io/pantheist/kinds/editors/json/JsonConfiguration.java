@@ -1,4 +1,4 @@
-package io.pantheist.kinds.editors;
+package io.pantheist.kinds.editors.json;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -7,12 +7,15 @@ import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
+import io.pantheist.kinds.editors.ColorManager;
+import io.pantheist.kinds.editors.JsonDamagerRepairer;
+import io.pantheist.kinds.editors.WordDoubleClickStrategy;
 import io.pantheist.kinds.parse.json.Js;
 import io.pantheist.kinds.parse.json.ParseJson;
 
 public class JsonConfiguration extends SourceViewerConfiguration
 {
-	private XMLDoubleClickStrategy doubleClickStrategy;
+	private WordDoubleClickStrategy doubleClickStrategy;
 	private final ColorManager colorManager;
 	private final Js initialParseState;
 
@@ -29,7 +32,7 @@ public class JsonConfiguration extends SourceViewerConfiguration
 	{
 		if (doubleClickStrategy == null)
 		{
-			doubleClickStrategy = new XMLDoubleClickStrategy();
+			doubleClickStrategy = new WordDoubleClickStrategy();
 		}
 		return doubleClickStrategy;
 	}

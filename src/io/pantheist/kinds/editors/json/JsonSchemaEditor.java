@@ -1,6 +1,8 @@
-package io.pantheist.kinds.editors;
+package io.pantheist.kinds.editors.json;
 
 import org.eclipse.ui.editors.text.TextEditor;
+
+import io.pantheist.kinds.editors.ColorManager;
 
 public class JsonSchemaEditor extends TextEditor {
 
