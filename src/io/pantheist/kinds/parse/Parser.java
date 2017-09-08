@@ -32,18 +32,19 @@ public final class Parser<S>
 
 		try
 		{
-			while (position != text.length())
+			while (!stack.isEmpty())
 			{
 				considerOptions();
 			}
 
-			if (!stack.isEmpty())
+			if (position != text.length())
 			{
-				throw new ParserException("Stack is not empty at the end");
+				throw new ParserException("Stack is empty and still text left to consume");
 			}
 		}
 		catch (final ParserException ex)
 		{
+			//System.out.println(ex.getMessage());
 			listener.acceptSequence(position, text.length(), ParseColorJson.INVALID);
 		}
 
