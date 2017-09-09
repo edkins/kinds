@@ -8,21 +8,16 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import io.pantheist.kinds.editors.ColorManager;
-import io.pantheist.kinds.editors.JsonDamagerRepairer;
 import io.pantheist.kinds.editors.WordDoubleClickStrategy;
-import io.pantheist.kinds.parse.logic.LogicState;
-import io.pantheist.kinds.parse.logic.ParseLogic;
 
 public class LogicConfiguration extends SourceViewerConfiguration
 {
 	private WordDoubleClickStrategy doubleClickStrategy;
 	private final ColorManager colorManager;
-	private final LogicState initialParseState;
 
 	public LogicConfiguration(final ColorManager colorManager)
 	{
 		this.colorManager = colorManager;
-		this.initialParseState = ParseLogic.init();
 	}
 
 	@Override
@@ -41,7 +36,7 @@ public class LogicConfiguration extends SourceViewerConfiguration
 	public IPresentationReconciler getPresentationReconciler(final ISourceViewer sourceViewer)
 	{
 		final PresentationReconciler reconciler = new PresentationReconciler();
-		final JsonDamagerRepairer<LogicState> dr = new JsonDamagerRepairer<>(colorManager, initialParseState);
+		final LogicDamagerRepairer dr = new LogicDamagerRepairer(colorManager);
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
