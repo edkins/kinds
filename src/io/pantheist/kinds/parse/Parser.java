@@ -44,7 +44,7 @@ public final class Parser<S>
 		}
 		catch (final ParserException ex)
 		{
-			//System.out.println(ex.getMessage());
+			System.out.println(ex.getMessage());
 			listener.acceptSequence(position, text.length(), ParseColorJson.INVALID);
 		}
 
@@ -83,6 +83,7 @@ public final class Parser<S>
 		final Matcher matcher = option.pattern().matcher(subsequence);
 		if (matcher.find())
 		{
+			System.out.println(spaces() + text.subSequence(position, position + matcher.end()));
 			for (final IParseState<S> item : option.stack())
 			{
 				stack.push(item);
@@ -98,5 +99,15 @@ public final class Parser<S>
 		{
 			return false;
 		}
+	}
+
+	private String spaces()
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < stack.size(); i++)
+		{
+			sb.append(' ');
+		}
+		return sb.toString();
 	}
 }

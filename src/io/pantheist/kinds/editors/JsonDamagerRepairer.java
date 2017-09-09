@@ -78,6 +78,11 @@ public class JsonDamagerRepairer<T> implements IPresentationDamager, IPresentati
 			return new DocumentCharSequence(document, this.start + start, this.start + end);
 		}
 
+		@Override
+		public String toString()
+		{
+			return new StringBuilder().append(this).toString();
+		}
 	}
 
 	@Override

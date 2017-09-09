@@ -7,4 +7,6 @@ public interface IParseStack<S>
 	S pop() throws ParserException;
 
 	boolean isEmpty();
+
+	int size();
 }

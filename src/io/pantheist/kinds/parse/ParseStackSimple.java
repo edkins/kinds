@@ -34,4 +34,10 @@ public final class ParseStackSimple<S> implements IParseStack<S>
 		return list.isEmpty();
 	}
 
+	@Override
+	public int size()
+	{
+		return list.size();
+	}
+
 }
