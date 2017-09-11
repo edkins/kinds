@@ -10,12 +10,8 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
-import org.eclipse.swt.custom.StyleRange;
 
 import io.pantheist.kinds.editors.ColorManager;
-import io.pantheist.kinds.parse.IParseColor;
-import io.pantheist.kinds.parse.IParseListener;
-import io.pantheist.kinds.parse.logic.LogicColorer;
 import io.pantheist.kinds.parse.logic.LogicLexer;
 import io.pantheist.kinds.parse.logic.LogicParser;
 
@@ -38,25 +34,11 @@ public class LogicDamagerRepairer implements IPresentationDamager, IPresentation
 		final TokenStream tokenStream = new CommonTokenStream(lexer);
 		final LogicParser parser = new LogicParser(tokenStream);
 
-		final LogicColorer colorer = new LogicColorer(new IParseListener() {
+		final LogicParseTreeListener listener = new LogicParseTreeListener(presentation, colorManager);
+		parser.addErrorListener(listener);
+		parser.addParseListener(listener);
 
-			@Override
-			public void acceptSequence(final int start, final int end, final IParseColor color)
-			{
-				if (start >= 0 && start <= end && end <= document.getLength())
-				{
-					presentation
-							.addStyleRange(
-									new StyleRange(start, end - start, colorManager.getColor(color.rgb()), null));
-				}
-				else
-				{
-					System.out.println("start=" + start + ",end=" + end);
-				}
-			}
-		});
-
-		colorer.visitR(parser.r());
+		parser.r();
 	}
 
 	@Override
@@ -69,6 +51,7 @@ public class LogicDamagerRepairer implements IPresentationDamager, IPresentation
 	public IRegion getDamageRegion(final ITypedRegion partition, final DocumentEvent event,
 			final boolean documentPartitioningChanged)
 	{
+		System.out.println("Damage region length is " + document.getLength());
 		return new Region(0, document.getLength());
 	}
 

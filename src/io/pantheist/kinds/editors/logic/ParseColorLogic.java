@@ -1,4 +1,4 @@
-package io.pantheist.kinds.parse.logic;
+package io.pantheist.kinds.editors.logic;
 
 import org.eclipse.swt.graphics.RGB;
 
