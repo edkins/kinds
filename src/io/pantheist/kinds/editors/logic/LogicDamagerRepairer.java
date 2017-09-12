@@ -19,10 +19,12 @@ public class LogicDamagerRepairer implements IPresentationDamager, IPresentation
 {
 	private IDocument document;
 	private final ColorManager colorManager;
+	private final TokenColorer tokenColorer;
 
-	public LogicDamagerRepairer(final ColorManager colorManager)
+	public LogicDamagerRepairer(final ColorManager colorManager, final TokenColorer tokenColorer)
 	{
 		this.colorManager = colorManager;
+		this.tokenColorer = tokenColorer;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class LogicDamagerRepairer implements IPresentationDamager, IPresentation
 		final TokenStream tokenStream = new CommonTokenStream(lexer);
 		final LogicParser parser = new LogicParser(tokenStream);
 
-		final LogicParseTreeListener listener = new LogicParseTreeListener(presentation, colorManager);
+		final LogicParseTreeListener listener = new LogicParseTreeListener(presentation, tokenColorer, colorManager);
 		parser.addErrorListener(listener);
 		parser.addParseListener(listener);
 

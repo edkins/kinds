@@ -26,31 +26,30 @@ public class LogicParseTreeListener implements ParseTreeListener, ANTLRErrorList
 		int rule;
 		int tokenCount;
 		boolean containsErrors;
-		int lastGoodIndex;
 
 		public StackState(final int rule, final int lastGoodIndex)
 		{
 			this.rule = rule;
 			this.tokenCount = 0;
 			this.containsErrors = false;
-			this.lastGoodIndex = lastGoodIndex;
 		}
 	}
 
-	private static final ParseColorLogic[][] colors = {
-			{ ParseColorLogic.KEYWORD, ParseColorLogic.VARIABLE, ParseColorLogic.BLACK, ParseColorLogic.VARIABLE,
-					ParseColorLogic.BLACK, ParseColorLogic.BLACK }
-	};
-
-	private final List<StackState> stack;
 	private final TextPresentation presentation;
 	private final ColorManager colorManager;
+	private final TokenColorer tokenColorer;
+	private final List<StackState> stack;
+	private int lastIndex;
 
-	public LogicParseTreeListener(final TextPresentation presentation, final ColorManager colorManager)
+	public LogicParseTreeListener(
+			final TextPresentation presentation,
+			final TokenColorer tokenColorer,
+			final ColorManager colorManager)
 	{
 		this.presentation = presentation;
-		this.stack = new ArrayList<>();
 		this.colorManager = colorManager;
+		this.tokenColorer = tokenColorer;
+		this.stack = new ArrayList<>();
 	}
 
 	@Override
@@ -77,30 +76,35 @@ public class LogicParseTreeListener implements ParseTreeListener, ANTLRErrorList
 	public void visitTerminal(final TerminalNode node)
 	{
 		final StackState top = this.stack.get(this.stack.size() - 1);
-		System.out.println("visitTerminal errors=" + top.containsErrors);
+		System.out.println(
+				String.format("visitTerminal type=%s errors=%s", node.getSymbol().getType(), top.containsErrors));
 		if (!top.containsErrors)
 		{
-			final int t = top.tokenCount;
-			if (t >= colors[top.rule].length)
-			{
-				throw new IllegalStateException("Too many tokens for rule " + top.rule);
-			}
 			final int stopIndex = node.getSymbol().getStopIndex() + 1;
 			top.tokenCount++;
-			top.lastGoodIndex = stopIndex;
-			addStyleRange(node.getSymbol().getStartIndex(), stopIndex,
-					colors[top.rule][t]);
+			addStyleRangeGood(node.getSymbol().getStartIndex(), stopIndex,
+					tokenColorer.color(node.getSymbol()));
 		}
 	}
 
-	private void addStyleRange(final int startIndex, final int stopIndex,
+	private void addStyleRangeGood(final int startIndex, final int stopIndex,
 			final ParseColorLogic color)
 	{
-		System.out.println(String.format("addStyleRange %s %s %s", startIndex, stopIndex, color));
-		presentation.addStyleRange(new StyleRange(startIndex,
-				stopIndex - startIndex,
-				colorManager.getColor(color.rgb()),
-				null));
+		System.out.println(String.format("addStyleRangeGood %s %s %s", startIndex, stopIndex, color));
+		addStyleRange(lastIndex, startIndex, ParseColorLogic.INVALID);
+		addStyleRange(startIndex, stopIndex, color);
+		lastIndex = stopIndex;
+	}
+
+	private void addStyleRange(final int startIndex, final int stopIndex, final ParseColorLogic color)
+	{
+		if (stopIndex > startIndex)
+		{
+			presentation.addStyleRange(new StyleRange(startIndex,
+					stopIndex - startIndex,
+					colorManager.getColor(color.rgb()),
+					null));
+		}
 	}
 
 	private void push(final int rule, final int startIndex)
@@ -121,14 +125,6 @@ public class LogicParseTreeListener implements ParseTreeListener, ANTLRErrorList
 					+ stack.get(i).rule);
 		}
 
-		if (stack.get(i).containsErrors)
-		{
-			final int startIndex = stack.get(i).lastGoodIndex;
-			addStyleRange(startIndex,
-					stopIndex,
-					ParseColorLogic.INVALID);
-		}
-
 		stack.remove(i);
 	}
 
@@ -136,18 +132,21 @@ public class LogicParseTreeListener implements ParseTreeListener, ANTLRErrorList
 	public void reportAmbiguity(final Parser arg0, final DFA arg1, final int arg2, final int arg3, final boolean arg4,
 			final BitSet arg5, final ATNConfigSet arg6)
 	{
+		System.out.println("reportAmbiguity");
 	}
 
 	@Override
 	public void reportAttemptingFullContext(final Parser arg0, final DFA arg1, final int arg2, final int arg3,
 			final BitSet arg4, final ATNConfigSet arg5)
 	{
+		System.out.println("reportAttemptingFullContext");
 	}
 
 	@Override
 	public void reportContextSensitivity(final Parser arg0, final DFA arg1, final int arg2, final int arg3,
 			final int arg4, final ATNConfigSet arg5)
 	{
+		System.out.println("reportContextSensitivity");
 	}
 
 	@Override

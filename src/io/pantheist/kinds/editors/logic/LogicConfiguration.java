@@ -9,15 +9,18 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
 import io.pantheist.kinds.editors.ColorManager;
 import io.pantheist.kinds.editors.WordDoubleClickStrategy;
+import io.pantheist.kinds.parse.logic.LogicParser;
 
 public class LogicConfiguration extends SourceViewerConfiguration
 {
 	private WordDoubleClickStrategy doubleClickStrategy;
 	private final ColorManager colorManager;
+	private final TokenColorer tokenColorer;
 
 	public LogicConfiguration(final ColorManager colorManager)
 	{
 		this.colorManager = colorManager;
+		this.tokenColorer = new TokenColorer(LogicParser.tokenNames);
 	}
 
 	@Override
@@ -36,7 +39,8 @@ public class LogicConfiguration extends SourceViewerConfiguration
 	public IPresentationReconciler getPresentationReconciler(final ISourceViewer sourceViewer)
 	{
 		final PresentationReconciler reconciler = new PresentationReconciler();
-		final LogicDamagerRepairer dr = new LogicDamagerRepairer(colorManager);
+		final LogicDamagerRepairer dr = new LogicDamagerRepairer(colorManager,
+				tokenColorer);
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 

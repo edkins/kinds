@@ -1,4 +1,12 @@
 grammar Logic;
-r : 'global' ID ':' ID ';' EOF;
+r : statement* EOF;
+statement: statement_global | statement_def;
+statement_global: 'global' ID ':' ID ';';
+statement_def: 'def' ID '=' expr ';';
+expr: expr_id | expr_paren;
+expr_id: ID;
+expr_paren: OPEN expr CLOSED;
+OPEN: '(' | '[' | '{';
+CLOSED: ')' | ']' | '}';
 ID: [a-z]+ ;
-WS : [ \t\r\n]+ -> skip ;
+WS : [ \t\r\n]+ -> skip;
